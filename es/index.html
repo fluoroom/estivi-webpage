@@ -1,0 +1,2454 @@
+<!DOCTYPE html>
+
+<html class="no-js" data-lang-en="/" data-lang-es="/es/" lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Estivi — SSTV, con agenda.</title>
+    <meta
+      content="Estivi convierte la televisión de barrido lento en un canal con agenda: un transmisor en Rust que acciona la radio y un receptor en el navegador que convierte el aire en imágenes, una guía y un calendario."
+      name="description">
+    <meta content="dark" name="color-scheme">
+    <meta content="#0a0b0d" name="theme-color">
+    <meta content="LU1AQY" name="author">
+    <link href="/favicon.svg" rel="icon" type="image/svg+xml">
+    <link href="/favicon-32.png" rel="icon" sizes="32x32" type="image/png">
+    <link href="/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="/" hreflang="en" rel="alternate">
+    <link href="/es/" hreflang="es" rel="alternate">
+    <link href="/" hreflang="x-default" rel="alternate">
+    <meta content="website" property="og:type">
+    <meta content="Estivi" property="og:site_name">
+    <meta content="es_AR" property="og:locale">
+    <meta content="en_US" property="og:locale:alternate">
+    <meta content="Estivi — SSTV, con agenda." property="og:title">
+    <meta
+      content="Una estación de radio en una ventana. Armá una semana de imágenes SSTV, cortinas y bloques de una sola fecha; el transmisor acciona la radio. El receptor en el navegador convierte el aire en imágenes y un calendario."
+      property="og:description">
+    <meta content="/og-image-es.png" property="og:image">
+    <meta content="image/png" property="og:image:type">
+    <meta content="1200" property="og:image:width">
+    <meta content="630" property="og:image:height">
+    <meta
+      content="Estivi — SSTV, con agenda. Un atardecer decodificándose dentro de una ventana de receptor."
+      property="og:image:alt">
+    <meta content="summary_large_image" name="twitter:card">
+    <meta content="Estivi — SSTV, con agenda." name="twitter:title">
+    <meta
+      content="Una estación SSTV con agenda y un receptor en el navegador. Imágenes, una guía y un calendario — por el aire."
+      name="twitter:description">
+    <meta content="/og-image-es.png" name="twitter:image">
+    <meta
+      content="Estivi — SSTV, con agenda. Un atardecer decodificándose dentro de una ventana de receptor."
+      name="twitter:image:alt">
+    <link
+      as="font"
+      crossorigin
+      href="/assets/fonts/space-grotesk.woff2"
+      rel="preload"
+      type="font/woff2">
+    <link
+      as="font"
+      crossorigin
+      href="/assets/fonts/ibm-plex-mono-400.woff2"
+      rel="preload"
+      type="font/woff2">
+    <link
+      as="image"
+      fetchpriority="high"
+      href="/assets/img/atardecer.webp"
+      rel="preload"
+      type="image/webp">
+    <script src="/assets/js/lang-detect.js"></script>
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <noscript>
+      <style>
+        .visor__utc,
+        .visor__replay,
+        .nav-toggle {
+          display: none !important;
+        }
+        @media (max-width: 960px) {
+          .site-header__inner {
+            flex-wrap: wrap;
+          }
+          .primary-nav {
+            position: static;
+            visibility: visible;
+            opacity: 1;
+            transform: none;
+            flex-basis: 100%;
+            order: 3;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0 16px;
+            padding: 0 0 9px;
+            border: 0;
+            background: none;
+            box-shadow: none;
+          }
+          .primary-nav .nav-link {
+            padding: 3px 0;
+            border: 0;
+            font-size: 0.78rem;
+          }
+          .primary-nav__mobile-extra {
+            display: none;
+          }
+        }
+      </style>
+    </noscript>
+    <script defer src="/assets/js/main.js"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Estivi",
+        "softwareVersion": "0.2.2",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Linux, Windows, macOS",
+        "inLanguage": "es",
+        "description": "SSTV, con agenda. Un transmisor que corre un canal de televisión de barrido lento y un receptor en el navegador que decodifica las imágenes y la guía de la estación.",
+        "url": "https://github.com/fluoroom/estivi",
+        "downloadUrl": "https://github.com/fluoroom/estivi-tx/releases/latest",
+        "sameAs": [
+          "https://github.com/fluoroom/estivi-tx",
+          "https://github.com/fluoroom/estivi-rx"
+        ],
+        "author": {
+          "@type": "Person",
+          "name": "LU1AQY",
+          "url": "https://lu1aqy.radio"
+        }
+      }
+    </script>
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main">Saltar al contenido</a>
+    <svg aria-hidden="true" class="svg-sprite" focusable="false">
+      <symbol id="i-arrow-up-right" viewbox="0 0 24 24">
+        <path
+          d="M7 17 17 7M8 7h9v9"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+      <symbol id="i-arrow-down" viewbox="0 0 24 24">
+        <path
+          d="M12 4v16m-6-6 6 6 6-6"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+      <symbol id="i-arrow-right" viewbox="0 0 24 24">
+        <path
+          d="M4 12h16m-6-6 6 6-6 6"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+      <symbol id="i-chevron-left" viewbox="0 0 24 24">
+        <path
+          d="m15 6-6 6 6 6"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.7"
+        ></path>
+      </symbol>
+      <symbol id="i-chevron-right" viewbox="0 0 24 24">
+        <path
+          d="m9 6 6 6-6 6"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.7"
+        ></path>
+      </symbol>
+      <symbol id="i-github" viewbox="0 0 24 24">
+        <path
+          d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.41-5.25 5.69.41.35.78 1.05.78 2.12 0 1.53-.01 2.76-.01 3.14 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"
+          fill="currentColor"
+        ></path>
+      </symbol>
+      <symbol id="i-replay" viewbox="0 0 24 24">
+        <path
+          d="M3 11a9 9 0 1 1 2.64 6.36M3 5v6h6"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+      <symbol id="i-copy" viewbox="0 0 24 24">
+        <rect
+          fill="none"
+          height="11"
+          rx="2"
+          stroke="currentColor"
+          stroke-width="1.5"
+          width="11"
+          x="9"
+          y="9"
+        ></rect>
+        <path
+          d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-width="1.5"
+        ></path>
+      </symbol>
+      <symbol id="i-check" viewbox="0 0 24 24">
+        <path
+          d="m4 12.5 5.5 5.5L20 6.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.8"
+        ></path>
+      </symbol>
+      <symbol id="i-menu" viewbox="0 0 24 24">
+        <path
+          d="M4 7h16M4 12h16M4 17h16"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+      <symbol id="i-close" viewbox="0 0 24 24">
+        <path
+          d="m6 6 12 12M18 6 6 18"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+      <symbol id="i-file" viewbox="0 0 24 24">
+        <path
+          d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"
+          fill="none"
+          stroke="currentColor"
+          stroke-linejoin="round"
+          stroke-width="1.5"
+        ></path>
+        <path
+          d="M14 3v5h5M8.5 13h7M8.5 17h5"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-width="1.5"
+        ></path>
+      </symbol>
+      <symbol id="i-waveform" viewbox="0 0 24 24">
+        <path
+          d="M3 12h3l2.5-6 3.5 12 3-8 2 2h4"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+      <symbol id="i-broadcast" viewbox="0 0 24 24">
+        <circle
+          cx="12"
+          cy="12"
+          fill="none"
+          r="2.2"
+          stroke="currentColor"
+          stroke-width="1.5"
+        ></circle>
+        <path
+          d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 16.2a6 6 0 0 0 0-8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 19.1a10 10 0 0 0 0-14.2"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-width="1.5"
+        ></path>
+      </symbol>
+      <symbol id="i-browser" viewbox="0 0 24 24">
+        <rect
+          fill="none"
+          height="16"
+          rx="2.5"
+          stroke="currentColor"
+          stroke-width="1.5"
+          width="18"
+          x="3"
+          y="4"
+        ></rect>
+        <path
+          d="M3 9h18M7 6.5h.01M10 6.5h.01"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-width="1.6"
+        ></path>
+        <path
+          d="M8 14h8M8 17h5"
+          fill="none"
+          opacity=".7"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-width="1.4"
+        ></path>
+      </symbol>
+      <symbol id="i-radio" viewbox="0 0 24 24">
+        <rect
+          fill="none"
+          height="13"
+          rx="2.5"
+          stroke="currentColor"
+          stroke-width="1.5"
+          width="18"
+          x="3"
+          y="7"
+        ></rect>
+        <path
+          d="M6 7V5.5A1.5 1.5 0 0 1 7.5 4h5"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-width="1.5"
+        ></path>
+        <circle
+          cx="8"
+          cy="14"
+          fill="none"
+          r="2.5"
+          stroke="currentColor"
+          stroke-width="1.5"
+        ></circle>
+        <path
+          d="M14 12h4M14 15h4M14 18h2"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-width="1.4"
+        ></path>
+      </symbol>
+      <symbol id="i-terminal" viewbox="0 0 24 24">
+        <rect
+          fill="none"
+          height="16"
+          rx="2.5"
+          stroke="currentColor"
+          stroke-width="1.5"
+          width="18"
+          x="3"
+          y="4"
+        ></rect>
+        <path
+          d="m7 9 3.5 3L7 15M13 15h4"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.5"
+        ></path>
+      </symbol>
+      <symbol id="i-external" viewbox="0 0 24 24">
+        <path
+          d="M14 4h6v6M20 4l-8 8M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+      <symbol id="i-expand" viewbox="0 0 24 24">
+        <path
+          d="M9 4H4v5M15 4h5v5M15 20h5v-5M9 20H4v-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+      <symbol id="i-plus" viewbox="0 0 24 24">
+        <path
+          d="M12 5v14M5 12h14"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+      <symbol id="i-heart" viewbox="0 0 24 24">
+        <path
+          d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"
+          fill="none"
+          stroke="currentColor"
+          stroke-linejoin="round"
+          stroke-width="1.6"
+        ></path>
+      </symbol>
+    </svg>
+    <header class="site-header" data-header="">
+      <div class="container site-header__inner">
+        <a class="brand" href="#top">
+          <span aria-hidden="true" class="brand__mark">
+            <svg viewbox="0 0 32 32">
+              <rect
+                fill="#0d1014"
+                height="30.8"
+                rx="8.4"
+                stroke="currentColor"
+                stroke-opacity=".24"
+                width="30.8"
+                x=".6"
+                y=".6"
+              ></rect>
+              <g
+                opacity=".92"
+                stroke="#8fbdf4"
+                stroke-linecap="round"
+                stroke-width="1.35"
+              >
+                <path d="M6.5 10h19M6.5 14h19M6.5 18h19M6.5 22h19"></path>
+              </g>
+              <path
+                d="M4 16.6h5.1l2.5-6.1 4.1 12.2 3-8.2 2.1 2.4H28"
+                fill="none"
+                stroke="#ff4d4f"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.1"
+              ></path>
+            </svg>
+          </span>
+          <span class="brand__word"
+            >estivi<span class="brand__dot">.</span></span
+          >
+          <span class="brand__tag">Estación SSTV</span>
+          <span class="sr-only">— inicio</span>
+        </a>
+        <nav
+          aria-label="Principal"
+          class="primary-nav"
+          data-nav=""
+          id="primary-nav"
+        >
+          <a class="nav-link" data-nav-link="" href="#how">Cómo funciona</a>
+          <a class="nav-link" data-nav-link="" href="#week">La semana</a>
+          <a class="nav-link" data-nav-link="" href="#air">Al aire</a>
+          <a class="nav-link" data-nav-link="" href="#inside">Adentro</a>
+          <a class="nav-link" data-nav-link="" href="#get">Para empezar</a>
+          <div class="primary-nav__mobile-extra">
+            <div class="primary-nav__lang">
+              <span class="primary-nav__lang-label mono">Idioma</span>
+              <div aria-label="Idioma" class="lang-switch" role="group">
+                <span
+                  aria-current="page"
+                  class="lang-option is-current"
+                  lang="es"
+                  >ES<span class="sr-only"> — Español</span></span
+                >
+                <span aria-hidden="true" class="lang-sep">/</span>
+                <a
+                  class="lang-option"
+                  data-set-lang="en"
+                  href="/"
+                  hreflang="en"
+                  lang="en"
+                  >EN<span class="sr-only"> — English</span></a
+                >
+              </div>
+            </div>
+            <a
+              class="nav-link nav-link--gh"
+              href="https://github.com/fluoroom/estivi"
+            >
+              <svg aria-hidden="true" class="icon">
+                <use href="#i-github"></use>
+              </svg>
+              GitHub
+            </a>
+            <p class="primary-nav__note">
+              SSTV, con agenda.<br >73 de LU1AQY.
+            </p>
+          </div>
+        </nav>
+        <div class="site-header__actions">
+          <div aria-label="Idioma" class="lang-switch" role="group">
+            <span aria-current="page" class="lang-option is-current" lang="es"
+              >ES<span class="sr-only"> — Español</span></span
+            >
+            <span aria-hidden="true" class="lang-sep">/</span>
+            <a
+              class="lang-option"
+              data-set-lang="en"
+              href="/"
+              hreflang="en"
+              lang="en"
+              >EN<span class="sr-only"> — English</span></a
+            >
+          </div>
+          <a
+            aria-label="Estivi en GitHub"
+            class="icon-link"
+            href="https://github.com/fluoroom/estivi"
+          >
+            <svg aria-hidden="true" class="icon">
+              <use href="#i-github"></use>
+            </svg>
+          </a>
+          <a
+            class="btn btn--primary btn--small"
+            href="https://github.com/fluoroom/estivi-tx/releases/latest"
+          >
+            Descargar
+            <svg aria-hidden="true" class="icon">
+              <use href="#i-arrow-down"></use>
+            </svg>
+          </a>
+          <button
+            aria-controls="primary-nav"
+            aria-expanded="false"
+            aria-label="Abrir menú"
+            class="nav-toggle"
+            data-nav-toggle=""
+            type="button"
+          >
+            <span class="nav-toggle__open"
+              ><svg aria-hidden="true" class="icon">
+                <use href="#i-menu"></use></svg
+            ></span>
+            <span class="nav-toggle__close"
+              ><svg aria-hidden="true" class="icon">
+                <use href="#i-close"></use></svg
+            ></span>
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="nav-scrim" data-nav-scrim="" hidden></div>
+    <main id="main" tabindex="-1">
+      <section aria-labelledby="hero-title" class="hero">
+        <div aria-hidden="true" class="hero__bg">
+          <div class="hero__grid"></div>
+          <div class="hero__glow hero__glow--red"></div>
+          <div class="hero__glow hero__glow--blue"></div>
+        </div>
+        <div class="container hero__inner">
+          <div class="hero__copy">
+            <p class="hero__eyebrow">
+              <span aria-hidden="true" class="signal-dot"></span>
+              Estación v0.2.2
+              <span class="hero__eyebrow-sep">/</span>
+              receptor en tu navegador
+            </p>
+            <h1 class="hero__title" id="hero-title">
+              SSTV,<br >
+              <span class="hero__title-line">con <em>agenda.</em></span>
+            </h1>
+            <p class="hero__lede">
+              La SSTV manda una imagen fija por un canal de voz de banda
+              angosta, una línea por vez. Estivi la convierte en un canal que
+              programás: armás una semana de imágenes, cortinas y bloques de una
+              sola fecha; el transmisor acciona la radio y la pone al aire, con
+              indicativo y todo. El receptor en el navegador convierte el aire
+              en imágenes y un calendario.
+            </p>
+            <div class="hero__actions">
+              <a
+                class="btn btn--primary btn--lg"
+                href="https://github.com/fluoroom/estivi-tx/releases/latest"
+              >
+                Descargar Estivi
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-down"></use>
+                </svg>
+              </a>
+              <a
+                class="btn btn--ghost btn--lg"
+                href="https://estivi-rx.lu1aqy.radio"
+              >
+                Abrir el receptor
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-up-right"></use>
+                </svg>
+              </a>
+            </div>
+            <p class="hero__note">
+              Un ejecutable para la estación. Una página para quien escucha. Sin
+              cuenta, sin nube.
+            </p>
+            <ul aria-label="Plataformas y stack" class="hero__meta">
+              <li>Linux</li>
+              <li>Windows</li>
+              <li>macOS</li>
+              <li>Rust + Slint</li>
+              <li>Código en GitHub</li>
+            </ul>
+          </div>
+          <div class="hero__visual">
+            <figure class="visor" data-visor="">
+              <div class="visor__chrome">
+                <div class="visor__chrome-left">
+                  <span aria-hidden="true" class="window-dots"
+                    ><i></i><i></i><i></i
+                  ></span>
+                  <span class="visor__app">estivi rx</span>
+                </div>
+                <span class="visor__live"
+                  ><span aria-hidden="true" class="live-dot"></span> en
+                  vivo</span
+                >
+                <span aria-hidden="true" class="visor__utc" data-clock=""
+                  >UTC --:--:--</span
+                >
+              </div>
+              <div class="visor__screen" data-visor-screen="">
+                <img
+                  alt="Un dibujo de atardecer recibido como televisión de barrido lento: cielo violeta profundo, horizonte naranja, un sol pálido y montañas negras."
+                  class="visor__image"
+                  fetchpriority="high"
+                  height="960"
+                  src="/assets/img/atardecer.webp"
+                  width="1200">
+                <div aria-hidden="true" class="visor__shade"></div>
+                <div aria-hidden="true" class="visor__scanlines"></div>
+                <div aria-hidden="true" class="visor__noise"></div>
+                <div aria-hidden="true" class="visor__unveil"></div>
+                <div aria-hidden="true" class="visor__hud visor__hud--top">
+                  <span class="hud-chip">Scottie S1</span>
+                  <span class="hud-chip hud-chip--ghost">320 × 256</span>
+                </div>
+                <div class="visor__overlay">
+                  <div class="visor__titles">
+                    <p class="visor__kicker">
+                      <span aria-hidden="true" class="live-dot"></span>
+                      recibiendo ahora
+                    </p>
+                    <p class="visor__title">Noticias LU1AQY</p>
+                    <p class="visor__sub">21:00–23:00 · 14.230 MHz USB</p>
+                  </div>
+                  <p
+                    aria-hidden="true"
+                    class="visor__status mono"
+                    data-visor-status=""
+                  >
+                    señal enganchada
+                  </p>
+                </div>
+              </div>
+              <div aria-hidden="true" class="visor__progress">
+                <span class="visor__bar" data-visor-bar=""></span>
+              </div>
+              <figcaption class="visor__foot">
+                <span class="mono visor__legend"
+                  >VIS 0x3C · 320 × 256 · AX.25</span
+                >
+                <button class="visor__replay" data-replay="" type="button">
+                  <svg aria-hidden="true" class="icon">
+                    <use href="#i-replay"></use>
+                  </svg>
+                  Repetir
+                </button>
+              </figcaption>
+            </figure>
+            <p class="hero__caption">
+              Una transmisión de ejemplo decodificada en
+              <a href="https://github.com/fluoroom/estivi-rx">estivi-rx</a>. Sin
+              backend, sin plugins.
+            </p>
+          </div>
+        </div>
+      </section>
+      <div aria-hidden="true" class="ticker">
+        <div class="ticker__track">
+          <div class="ticker__group">
+            <span>22 modos SSTV</span><i></i> <span>AX.25 · 1200 baudios</span
+            ><i></i> <span>Identificación CW</span><i></i>
+            <span>PTT por serial o rigctld</span><i></i>
+            <span>Exportación FLAC</span><i></i> <span>Sin backend</span><i></i>
+            <span>Se instala como app</span><i></i>
+            <span>Un solo ejecutable</span><i></i>
+            <span>Linux / Windows / macOS</span><i></i> <span>73</span><i></i>
+          </div>
+          <div class="ticker__group">
+            <span>22 modos SSTV</span><i></i> <span>AX.25 · 1200 baudios</span
+            ><i></i> <span>Identificación CW</span><i></i>
+            <span>PTT por serial o rigctld</span><i></i>
+            <span>Exportación FLAC</span><i></i> <span>Sin backend</span><i></i>
+            <span>Se instala como app</span><i></i>
+            <span>Un solo ejecutable</span><i></i>
+            <span>Linux / Windows / macOS</span><i></i> <span>73</span><i></i>
+          </div>
+        </div>
+      </div>
+      <section
+        aria-labelledby="how-title"
+        class="section section--how"
+        id="how"
+      >
+        <div class="container">
+          <header class="section-head">
+            <p class="section-index"><span>01</span> El canal</p>
+            <div class="section-head__row">
+              <h2 class="section-title" id="how-title">
+                Sin nube.<br >Solo una <em>portadora.</em>
+              </h2>
+              <p class="section-lede">
+                Estivi son tres repositorios y un enlace de radio. El transmisor
+                sostiene la semana, acciona la radio y responde CW y DTMF. El
+                receptor convierte el audio en imágenes, una guía y un
+                calendario. El paraguas fija ambos en commits conocidos.
+              </p>
+            </div>
+          </header>
+          <div class="pipeline reveal">
+            <article class="pipe">
+              <div class="pipe__top">
+                <span class="pipe__num">01</span>
+                <span class="pipe__icon"
+                  ><svg aria-hidden="true" class="icon">
+                    <use href="#i-file"></use></svg
+                ></span>
+              </div>
+              <h3>.estivi</h3>
+              <p>
+                Tu semana en un archivo: programas, bloques de una sola fecha,
+                imágenes, cortinas y capas.
+              </p>
+              <span class="pipe__tag mono">archivo de canal</span>
+            </article>
+            <div aria-hidden="true" class="pipe-link">
+              <span class="pipe-link__label">renderiza</span>
+              <span class="pipe-link__line"><i></i></span>
+            </div>
+            <article class="pipe pipe--tx">
+              <div class="pipe__top">
+                <span class="pipe__num">02</span>
+                <span class="pipe__icon"
+                  ><svg aria-hidden="true" class="icon">
+                    <use href="#i-waveform"></use></svg
+                ></span>
+              </div>
+              <h3>estivi-tx</h3>
+              <p>
+                La estación. Renderiza todos los modos, acciona PTT y registra
+                cada turno.
+              </p>
+              <span class="pipe__tag mono">Rust + Slint</span>
+            </article>
+            <div aria-hidden="true" class="pipe-link">
+              <span class="pipe-link__label">transmite</span>
+              <span class="pipe-link__line"><i></i></span>
+            </div>
+            <article class="pipe pipe--air">
+              <div aria-hidden="true" class="pipe__rings">
+                <i></i><i></i><i></i>
+              </div>
+              <div class="pipe__top">
+                <span class="pipe__num">03</span>
+                <span class="pipe__icon"
+                  ><svg aria-hidden="true" class="icon">
+                    <use href="#i-broadcast"></use></svg
+                ></span>
+              </div>
+              <h3>Al aire</h3>
+              <p>Imágenes SSTV con VIS y tramas de guía AX.25. Nada más.</p>
+              <span class="pipe__tag mono">sin enlace privado</span>
+            </article>
+            <div aria-hidden="true" class="pipe-link">
+              <span class="pipe-link__label">escucha</span>
+              <span class="pipe-link__line"><i></i></span>
+            </div>
+            <article class="pipe pipe--rx">
+              <div class="pipe__top">
+                <span class="pipe__num">04</span>
+                <span class="pipe__icon"
+                  ><svg aria-hidden="true" class="icon">
+                    <use href="#i-browser"></use></svg
+                ></span>
+              </div>
+              <h3>estivi-rx</h3>
+              <p>
+                El receptor. Demodula en el navegador: imágenes, guía y línea de
+                tiempo.
+              </p>
+              <span class="pipe__tag mono">JavaScript + Web Audio</span>
+            </article>
+          </div>
+          <div class="sources reveal">
+            <p>Código, en tres partes:</p>
+            <div class="sources__links">
+              <a href="https://github.com/fluoroom/estivi-tx"
+                >estivi-tx <span>la estación</span>
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-up-right"></use></svg
+              ></a>
+              <a href="https://github.com/fluoroom/estivi-rx"
+                >estivi-rx <span>el receptor</span>
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-up-right"></use></svg
+              ></a>
+              <a href="https://github.com/fluoroom/estivi"
+                >estivi <span>el paraguas</span>
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-up-right"></use></svg
+              ></a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        aria-labelledby="week-title"
+        class="section section--week"
+        id="week"
+      >
+        <div class="container">
+          <header class="section-head">
+            <p class="section-index"><span>02</span> La semana</p>
+            <div class="section-head__row">
+              <h2 class="section-title" id="week-title">
+                Una semana,<br ><em>no una cola.</em>
+              </h2>
+              <p class="section-lede">
+                Cada día de la semana tiene su propio inicio, fin e intervalo.
+                El lunes puede durar quince minutos; el sábado, horas. Los
+                bloques de una sola fecha viven en un solo día. Se arma una vez
+                y listo.
+                <span class="section-lede__hint"
+                  >Elegí un bloque en la demo de abajo.</span
+                >
+              </p>
+            </div>
+          </header>
+          <div class="week reveal" data-week="">
+            <div class="week__chrome">
+              <div class="week__chrome-left">
+                <span aria-hidden="true" class="brand__mark brand__mark--tiny">
+                  <svg viewbox="0 0 32 32">
+                    <rect
+                      fill="#0d1014"
+                      height="30.8"
+                      rx="8.4"
+                      stroke="currentColor"
+                      stroke-opacity=".24"
+                      width="30.8"
+                      x=".6"
+                      y=".6"
+                    ></rect>
+                    <g
+                      opacity=".92"
+                      stroke="#8fbdf4"
+                      stroke-linecap="round"
+                      stroke-width="1.35"
+                    >
+                      <path d="M6.5 10h19M6.5 14h19M6.5 18h19M6.5 22h19"></path>
+                    </g>
+                    <path
+                      d="M4 16.6h5.1l2.5-6.1 4.1 12.2 3-8.2 2.1 2.4H28"
+                      fill="none"
+                      stroke="#ff4d4f"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.1"
+                    ></path>
+                  </svg>
+                </span>
+                <span class="week__app">estivi</span>
+                <span class="week__file mono">canal-demo.estivi</span>
+              </div>
+              <span class="week__meta mono">LU1AQY · 14.230 MHz</span>
+              <span class="week__badge mono">canal de ejemplo</span>
+            </div>
+            <div class="week__layout">
+              <div class="week__calendar-wrap">
+                <section
+                  aria-label="Agenda de la semana de ejemplo; desplazala horizontalmente para ver todos los días"
+                  class="calendar-scroll"
+                  tabindex="0"
+                >
+                  <div class="calendar">
+                    <div class="calendar__head">
+                      <div class="calendar__corner mono">local</div>
+                      <div class="calendar__day"><b>Lun</b><span>09</span></div>
+                      <div class="calendar__day"><b>Mar</b><span>10</span></div>
+                      <div class="calendar__day"><b>Mié</b><span>11</span></div>
+                      <div class="calendar__day"><b>Jue</b><span>12</span></div>
+                      <div class="calendar__day"><b>Vie</b><span>13</span></div>
+                      <div class="calendar__day"><b>Sáb</b><span>14</span></div>
+                      <div class="calendar__day"><b>Dom</b><span>15</span></div>
+                    </div>
+                    <div class="calendar__body">
+                      <div aria-hidden="true" class="calendar__times">
+                        <span class="calendar__tick calendar__tick--1"
+                          >12:00</span
+                        >
+                        <span class="calendar__tick calendar__tick--2"
+                          >15:00</span
+                        >
+                        <span class="calendar__tick calendar__tick--3"
+                          >18:00</span
+                        >
+                        <span class="calendar__tick calendar__tick--4"
+                          >21:00</span
+                        >
+                        <span class="calendar__tick calendar__tick--5"
+                          >00:00</span
+                        >
+                      </div>
+                      <div class="calendar__col">
+                        <button
+                          aria-pressed="false"
+                          class="event event--ajuste"
+                          data-block="ajuste"
+                          type="button"
+                        >
+                          <span class="event__title">Ajuste y paisaje</span>
+                          <span class="event__time">12:00–15:00</span>
+                        </button>
+                        <button
+                          aria-pressed="true"
+                          class="event event--noticias"
+                          data-block="noticias"
+                          type="button"
+                        >
+                          <span class="event__title">Noticias LU1AQY</span>
+                          <span class="event__time">21:00–23:00</span>
+                        </button>
+                        <button
+                          aria-pressed="false"
+                          class="event event--ronda"
+                          data-block="ronda"
+                          type="button"
+                        >
+                          <span class="event__title">Ronda DX</span>
+                          <span class="event__time">23:00–00:30</span>
+                        </button>
+                      </div>
+                      <div class="calendar__col">
+                        <button
+                          aria-pressed="false"
+                          class="event event--ajuste"
+                          data-block="ajuste"
+                          type="button"
+                        >
+                          <span class="event__title">Ajuste y paisaje</span>
+                          <span class="event__time">12:00–15:00</span>
+                        </button>
+                        <button
+                          aria-pressed="false"
+                          class="event event--radio"
+                          data-block="radio"
+                          type="button"
+                        >
+                          <span class="event__title">Radio Club</span>
+                          <span class="event__time">19:00–20:00</span>
+                        </button>
+                        <button
+                          aria-pressed="true"
+                          class="event event--noticias"
+                          data-block="noticias"
+                          type="button"
+                        >
+                          <span class="event__title">Noticias LU1AQY</span>
+                          <span class="event__time">21:00–23:00</span>
+                        </button>
+                        <button
+                          aria-pressed="false"
+                          class="event event--ronda"
+                          data-block="ronda"
+                          type="button"
+                        >
+                          <span class="event__title">Ronda DX</span>
+                          <span class="event__time">23:00–00:30</span>
+                        </button>
+                      </div>
+                      <div class="calendar__col">
+                        <button
+                          aria-pressed="false"
+                          class="event event--ajuste"
+                          data-block="ajuste"
+                          type="button"
+                        >
+                          <span class="event__title">Ajuste y paisaje</span>
+                          <span class="event__time">12:00–15:00</span>
+                        </button>
+                        <button
+                          aria-pressed="true"
+                          class="event event--noticias"
+                          data-block="noticias"
+                          type="button"
+                        >
+                          <span class="event__title">Noticias LU1AQY</span>
+                          <span class="event__time">21:00–23:00</span>
+                        </button>
+                        <button
+                          aria-pressed="false"
+                          class="event event--ronda"
+                          data-block="ronda"
+                          type="button"
+                        >
+                          <span class="event__title">Ronda DX</span>
+                          <span class="event__time">23:00–00:30</span>
+                        </button>
+                      </div>
+                      <div class="calendar__col">
+                        <button
+                          aria-pressed="false"
+                          class="event event--ajuste"
+                          data-block="ajuste"
+                          type="button"
+                        >
+                          <span class="event__title">Ajuste y paisaje</span>
+                          <span class="event__time">12:00–15:00</span>
+                        </button>
+                        <button
+                          aria-pressed="false"
+                          class="event event--radio"
+                          data-block="radio"
+                          type="button"
+                        >
+                          <span class="event__title">Radio Club</span>
+                          <span class="event__time">19:00–20:00</span>
+                        </button>
+                        <button
+                          aria-pressed="true"
+                          class="event event--noticias"
+                          data-block="noticias"
+                          type="button"
+                        >
+                          <span class="event__title">Noticias LU1AQY</span>
+                          <span class="event__time">21:00–23:00</span>
+                        </button>
+                        <button
+                          aria-pressed="false"
+                          class="event event--ronda"
+                          data-block="ronda"
+                          type="button"
+                        >
+                          <span class="event__title">Ronda DX</span>
+                          <span class="event__time">23:00–00:30</span>
+                        </button>
+                      </div>
+                      <div class="calendar__col">
+                        <button
+                          aria-pressed="false"
+                          class="event event--ajuste"
+                          data-block="ajuste"
+                          type="button"
+                        >
+                          <span class="event__title">Ajuste y paisaje</span>
+                          <span class="event__time">12:00–15:00</span>
+                        </button>
+                        <button
+                          aria-pressed="true"
+                          class="event event--noticias"
+                          data-block="noticias"
+                          type="button"
+                        >
+                          <span class="event__title">Noticias LU1AQY</span>
+                          <span class="event__time">21:00–23:00</span>
+                        </button>
+                        <button
+                          aria-pressed="false"
+                          class="event event--ronda"
+                          data-block="ronda"
+                          type="button"
+                        >
+                          <span class="event__title">Ronda DX</span>
+                          <span class="event__time">23:00–00:30</span>
+                        </button>
+                      </div>
+                      <div class="calendar__col">
+                        <button
+                          aria-pressed="false"
+                          class="event event--cierre"
+                          data-block="cierre"
+                          type="button"
+                        >
+                          <span class="event__title">Cierre</span>
+                          <span class="event__time">23:45–23:55</span>
+                        </button>
+                      </div>
+                      <div class="calendar__col">
+                        <button
+                          aria-pressed="false"
+                          class="event event--cierre"
+                          data-block="cierre"
+                          type="button"
+                        >
+                          <span class="event__title">Cierre</span>
+                          <span class="event__time">23:45–23:55</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                <p aria-hidden="true" class="week__hint mono">
+                  desplazá la semana
+                  <svg class="icon"><use href="#i-arrow-right"></use></svg>
+                </p>
+              </div>
+              <aside
+                aria-label="Detalles del bloque elegido"
+                class="week-panel"
+              >
+                <div class="week-panel__head">
+                  <p class="week-panel__label mono">bloque elegido</p>
+                  <p class="week-panel__hint mono">elegí un bloque</p>
+                </div>
+                <div
+                  aria-live="polite"
+                  class="week-panel__body"
+                  data-week-panel=""
+                >
+                  <div class="week-panel__visual">
+                    <div class="week-panel__preview">
+                      <img
+                        alt="La imagen de atardecer del canal de ejemplo, usada por este bloque."
+                        data-week-img=""
+                        height="960"
+                        src="/assets/img/atardecer.webp"
+                        width="1200">
+                      <span
+                        class="week-panel__mode mono"
+                        data-week-preview-mode=""
+                        >Scottie S1</span
+                      >
+                    </div>
+                  </div>
+                  <div class="week-panel__details">
+                    <h3 class="week-panel__title" data-week-title="">
+                      Noticias LU1AQY
+                    </h3>
+                    <p class="week-panel__when" data-week-when="">
+                      21:00–23:00 · Lun–Vie
+                    </p>
+                    <p class="week-panel__desc" data-week-desc="">
+                      El boletín de la noche, con un atardecer y el indicativo
+                      de la estación.
+                    </p>
+                    <dl class="week-panel__facts">
+                      <div>
+                        <dt>Se repite</dt>
+                        <dd data-week-runs="">Cada 10 min</dd>
+                      </div>
+                      <div>
+                        <dt>Modo</dt>
+                        <dd data-week-mode="">Scottie S1</dd>
+                      </div>
+                      <div>
+                        <dt>Imagen</dt>
+                        <dd data-week-picture="">atardecer.png</dd>
+                      </div>
+                    </dl>
+                    <p class="week-panel__turn-label mono">orden del turno</p>
+                    <ol class="turn" data-week-turn="">
+                      <li><span>Bienvenida</span><code>R36</code></li>
+                      <li><span>Imagen</span><code>S1</code></li>
+                      <li><span>Cortina posterior</span><code>R12</code></li>
+                      <li><span>Despedida</span><code>R24</code></li>
+                    </ol>
+                  </div>
+                </div>
+                <a
+                  class="week-panel__link"
+                  href="https://github.com/fluoroom/estivi-tx/blob/main/ejemplo/canal-demo.estivi"
+                >
+                  Abrir el canal de ejemplo
+                  <svg aria-hidden="true" class="icon">
+                    <use href="#i-arrow-up-right"></use>
+                  </svg>
+                </a>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        aria-labelledby="ends-title"
+        class="section section--ends"
+        id="ends"
+      >
+        <div class="container">
+          <header class="section-head">
+            <p class="section-index"><span>03</span> Las dos puntas</p>
+            <div class="section-head__row">
+              <h2 class="section-title" id="ends-title">
+                Hecho para<br ><em>las dos puntas.</em>
+              </h2>
+              <p class="section-lede">
+                Una mitad se comporta como una estación. La otra, como una
+                radio. Cada función mejora la transmisión o la recepción, y nada
+                necesita un servidor en el medio.
+              </p>
+            </div>
+          </header>
+          <div class="bento">
+            <article
+              class="bento-card bento-card--wide reveal"
+              data-spotlight=""
+            >
+              <div class="bento-card__head">
+                <span class="bento-card__tag bento-card__tag--tx mono"
+                  >TX · imágenes</span
+                >
+                <span class="bento-card__num mono">01</span>
+              </div>
+              <div aria-hidden="true" class="turnstrip">
+                <div class="turnstrip__item turnstrip__item--welcome">
+                  <span>bienvenida</span><b>R36</b>
+                </div>
+                <span class="turnstrip__arrow">→</span>
+                <div class="turnstrip__item turnstrip__item--picture">
+                  <span>imagen</span><b>M1</b>
+                </div>
+                <span class="turnstrip__arrow">→</span>
+                <div class="turnstrip__item turnstrip__item--bumper">
+                  <span>cortina post</span><b>R12</b>
+                </div>
+                <span class="turnstrip__arrow">→</span>
+                <div class="turnstrip__item turnstrip__item--bye">
+                  <span>despedida</span><b>R24</b>
+                </div>
+              </div>
+              <div class="bento-card__copy">
+                <h3>Imágenes con cortinas.</h3>
+                <p>
+                  La bienvenida y la despedida salen en el primer y último
+                  turno. Las cortinas previas y posteriores viajan con su
+                  imagen, que puede heredar su modo o elegir otro.
+                </p>
+              </div>
+            </article>
+            <article class="bento-card reveal" data-spotlight="">
+              <div class="bento-card__head">
+                <span class="bento-card__tag bento-card__tag--tx mono"
+                  >TX · activaciones</span
+                >
+                <span class="bento-card__num mono">02</span>
+              </div>
+              <div aria-hidden="true" class="trigger-demo">
+                <div class="trigger-demo__in">
+                  <span class="trigger">CW <b>K</b></span>
+                  <span class="trigger">DTMF <b>5</b></span>
+                </div>
+                <span class="trigger-demo__arrow">→</span>
+                <div class="trigger-demo__out">
+                  <span>imagen</span>
+                  <span>comando</span>
+                  <span>respuesta API</span>
+                  <span>secuencia</span>
+                </div>
+              </div>
+              <div class="bento-card__copy">
+                <h3>Le contesta a la radio.</h3>
+                <p>
+                  Las activaciones por CW y DTMF pueden ejecutar una imagen, un
+                  comando, una respuesta de API o una secuencia de acciones.
+                </p>
+              </div>
+            </article>
+            <article class="bento-card reveal" data-spotlight="">
+              <div class="bento-card__head">
+                <span class="bento-card__tag bento-card__tag--tx mono"
+                  >TX · en vivo</span
+                >
+                <span class="bento-card__num mono">03</span>
+              </div>
+              <div aria-hidden="true" class="live-demo">
+                <div class="live-demo__screen">
+                  <div class="live-demo__art"></div>
+                  <div class="live-demo__scan"></div>
+                </div>
+                <div class="live-demo__next">
+                  <span class="mono">próximo</span>
+                  <b>00:25:25</b>
+                  <span>atardecer.png</span>
+                </div>
+              </div>
+              <div class="bento-card__copy">
+                <h3>En vivo y lo que viene.</h3>
+                <p>
+                  Mirá la imagen llenarse línea por línea mientras sale. El
+                  próximo turno ya espera con su hora y su nombre de archivo.
+                </p>
+              </div>
+            </article>
+            <article
+              class="bento-card bento-card--wide reveal"
+              data-spotlight=""
+            >
+              <div class="bento-card__head">
+                <span class="bento-card__tag bento-card__tag--rx mono"
+                  >RX · decodificador</span
+                >
+                <span class="bento-card__num mono">04</span>
+              </div>
+              <div aria-hidden="true" class="decode-demo">
+                <div class="decode-demo__wave">
+                  <svg preserveaspectratio="none" viewbox="0 0 220 44">
+                    <path
+                      d="M0 22h8l3-7 3 14 3-11 3 8 3-4h6l2-16 3 32 3-24 3 18 2-10h7l3-6 3 12 3-9 3 6 3-3h7l4 5 3-9 3 14 3-9 3 4h10l3-12 3 24 3-17 3 11 3-6h8l3-4 3 8 3-13 3 19 3-11 3 6h8l2-5 3 10 3-15 3 20 3-12 3 7h9l3-3 3 7 3-10 3 6h8l3-4 3 8 3-12 3 16 3-9 3 5h8l3-8 3 12 3-6 3 3h6"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.2"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="decode-demo__steps">
+                  <span>audio</span><i>→</i><span>AudioWorklet</span><i>→</i
+                  ><span>AX.25 + SSTV</span><i>→</i
+                  ><span class="decode-demo__pixels"
+                    >píxeles<i></i><i></i><i></i><i></i><i></i><i></i><i></i
+                    ><i></i><i></i
+                  ></span>
+                </div>
+                <span class="decode-demo__note mono"
+                  >0 decodificadores en el servidor</span
+                >
+              </div>
+              <div class="bento-card__copy">
+                <h3>Decodificá en la página.</h3>
+                <p>
+                  El audio de la radio pasa por una etapa de ganancia a un
+                  AudioWorklet. AX.25 y SSTV corren en JavaScript; el servidor
+                  solo sirve archivos estáticos.
+                </p>
+              </div>
+            </article>
+            <article class="bento-card reveal" data-spotlight="">
+              <div class="bento-card__head">
+                <span class="bento-card__tag bento-card__tag--rx mono"
+                  >RX · señal</span
+                >
+                <span class="bento-card__num mono">05</span>
+              </div>
+              <div aria-hidden="true" class="recover-demo">
+                <svg preserveaspectratio="none" viewbox="0 0 280 64">
+                  <path
+                    d="M2 40c20 0 20-16 40-16s20 14 40 14 20-8 30-8"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  ></path>
+                  <path
+                    d="M140 30c20 0 22 10 40 10s22-14 42-14 24 8 54 8"
+                    fill="none"
+                    opacity=".65"
+                    stroke="currentColor"
+                    stroke-dasharray="4 4"
+                    stroke-width="1.5"
+                  ></path>
+                  <circle cx="132" cy="31" fill="currentColor" r="3"></circle>
+                  <circle cx="142" cy="30" fill="currentColor" r="3"></circle>
+                </svg>
+                <div class="recover-demo__labels">
+                  <span>señal</span><span class="recover-demo__fade">caída</span
+                  ><span>retoma</span>
+                </div>
+                <span class="recover-demo__badge mono"
+                  >espera el 30% de la imagen</span
+                >
+              </div>
+              <div class="bento-card__copy">
+                <h3>Aguantá una mala señal.</h3>
+                <p>
+                  Un desvanecimiento corto no tira la imagen. El decodificador
+                  espera el 30% del tiempo de imagen del modo y retoma donde
+                  vuelve la señal.
+                </p>
+              </div>
+            </article>
+            <article class="bento-card reveal" data-spotlight="">
+              <div class="bento-card__head">
+                <span class="bento-card__tag bento-card__tag--rx mono"
+                  >RX · sin conexión</span
+                >
+                <span class="bento-card__num mono">06</span>
+              </div>
+              <div aria-hidden="true" class="install-demo">
+                <div class="phone">
+                  <span class="phone__notch"></span>
+                  <span class="phone__app">rx<span>.</span></span>
+                  <span class="phone__label">estivi</span>
+                </div>
+                <div class="install-demo__meta">
+                  <span class="install-badge"><i></i> instalada</span>
+                  <span class="install-badge install-badge--muted"
+                    >lista sin conexión</span
+                  >
+                  <span class="mono install-demo__note"
+                    >imágenes en IndexedDB</span
+                  >
+                </div>
+              </div>
+              <div class="bento-card__copy">
+                <h3>Se instala como una app.</h3>
+                <p>
+                  Chromium ofrece <strong>Instalar app</strong>; en iPhone y
+                  iPad se agrega a la pantalla de inicio. Un service worker deja
+                  la página, las imágenes y la guía disponibles sin conexión.
+                </p>
+              </div>
+            </article>
+            <article class="bento-card reveal" data-spotlight="">
+              <div class="bento-card__head">
+                <span class="bento-card__tag bento-card__tag--tx mono"
+                  >TX · paquete</span
+                >
+                <span class="bento-card__num mono">07</span>
+              </div>
+              <div aria-hidden="true" class="small-demo">
+                <div class="small-demo__os">
+                  <span>Linux</span><span>Windows</span><span>macOS</span>
+                </div>
+                <div class="small-demo__ram">
+                  <span class="mono">~50 MB de RAM</span>
+                  <span class="ram"><i></i></span>
+                </div>
+                <div class="small-demo__lines mono">
+                  <span>7 temas</span><span>ES / EN</span
+                  ><span>registro CSV</span>
+                </div>
+              </div>
+              <div class="bento-card__copy">
+                <h3>Tan chico que no se nota.</h3>
+                <p>
+                  Un solo ejecutable, renderizado por software en unos 50 MB de
+                  RAM. Siete temas, inglés o español y un registro CSV de cada
+                  transmisión.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section
+        aria-labelledby="air-title"
+        class="section section--air"
+        id="air"
+      >
+        <div class="container">
+          <header class="section-head">
+            <p class="section-index"><span>04</span> Al aire</p>
+            <div class="section-head__row">
+              <h2 class="section-title" id="air-title">
+                El aire es<br ><em>el protocolo.</em>
+              </h2>
+              <p class="section-lede">
+                Entre las dos puntas no hay ningún enlace privado. Todo lo que
+                sabe el receptor llega como sonido: imágenes SSTV con sus
+                cabeceras VIS y tramas UI de AX.25 a 1200 baudios dirigidas a
+                <code>ESTIVI</code>. Quien se pierde la guía igual recibe las
+                imágenes; el calendario se completa a medida que llegan las
+                tramas.
+              </p>
+            </div>
+          </header>
+          <div class="air-grid">
+            <div class="air-specs reveal">
+              <dl class="spec-list">
+                <div>
+                  <dt>Modos</dt>
+                  <dd>22, de Martin a YoniQ</dd>
+                </div>
+                <div>
+                  <dt>Sincronía de imagen</dt>
+                  <dd>VIS en cada pieza</dd>
+                </div>
+                <div>
+                  <dt>Datos</dt>
+                  <dd>AX.25 UI · Bell 202 · 1200 baudios</dd>
+                </div>
+                <div>
+                  <dt>Identificación</dt>
+                  <dd>CW opcional antes y después</dd>
+                </div>
+                <div>
+                  <dt>PTT</dt>
+                  <dd>Serial o CAT por <code>rigctld</code></dd>
+                </div>
+                <div>
+                  <dt>Audio</dt>
+                  <dd>11.025 / 22.05 / 44.1 / 48 kHz · FLAC</dd>
+                </div>
+              </dl>
+              <p class="air-specs__note">
+                Una trama lleva el nombre de la estación, la frecuencia, el
+                rango, los días, los días restantes y lo que viene. Las tramas
+                de modo nombran cada imagen, sus cortinas, la bienvenida y la
+                despedida.
+              </p>
+              <div class="air-specs__links">
+                <a
+                  class="text-link"
+                  href="https://github.com/fluoroom/estivi-tx/blob/main/AX25.md"
+                  >Leer la interfaz AX.25
+                  <svg aria-hidden="true" class="icon">
+                    <use href="#i-arrow-up-right"></use></svg
+                ></a>
+                <a
+                  class="text-link"
+                  href="https://github.com/fluoroom/estivi-tx/blob/main/docs/MANUAL.md"
+                  >Abrir el manual
+                  <svg aria-hidden="true" class="icon">
+                    <use href="#i-arrow-up-right"></use></svg
+                ></a>
+              </div>
+            </div>
+            <div class="terminal reveal">
+              <div class="terminal__bar">
+                <div class="terminal__bar-left">
+                  <span aria-hidden="true" class="window-dots"
+                    ><i></i><i></i><i></i
+                  ></span>
+                  <span class="mono">AX.25 / trama UI</span>
+                </div>
+                <button
+                  aria-label="Copiar trama de guía"
+                  class="copy-btn"
+                  data-copy-target="guide-frame"
+                  type="button"
+                >
+                  <svg aria-hidden="true" class="icon">
+                    <use href="#i-copy"></use>
+                  </svg>
+                  <span>Copiar</span>
+                </button>
+              </div>
+              <pre
+                aria-label="Trama de guía AX.25"
+                class="terminal__body"
+                id="guide-frame"
+                tabindex="0"
+              ><code><span class="t-key">ESTIVI</span> 1
+<span class="t-key">FREQ</span> 14230000
+<span class="t-key">CALL</span> LU1AQY
+<span class="t-key">NAME</span> Noticias LU1AQY
+<span class="t-key">RANGE</span> 21:00-23:00
+<span class="t-key">DAYS</span> Mon,Tue,Wed,Thu,Fri
+<span class="t-key">DAYSLEFT</span> 99
+<span class="t-key">NEXT</span> Ronda DX|23:00-00:30|Mon,Tue,Wed,Thu,Fri|99</code></pre>
+              <div class="terminal__foot">
+                <span class="mono"
+                  >1200 baudios · Bell 202 · NRZI · CRC-16/CCITT</span
+                >
+                <span class="terminal__mode mono">ESTIVI MODE S1</span>
+              </div>
+            </div>
+          </div>
+          <div class="modes reveal">
+            <div class="modes__head">
+              <div>
+                <p class="section-index section-index--small">
+                  <span>22</span> formas de mandar una imagen
+                </p>
+                <h3>Una imagen por vez.</h3>
+              </div>
+              <p>
+                Todos los modos se renderizan por software y van precedidos por
+                su cabecera VIS. Elegí un modo para leer su forma.
+              </p>
+            </div>
+            <div class="modes__layout">
+              <div aria-label="Modos SSTV" class="mode-groups" role="group">
+                <div class="mode-group" data-family="martin">
+                  <p class="mode-group__label mono"><i></i> Martin</p>
+                  <div class="mode-group__chips">
+                    <button
+                      aria-pressed="true"
+                      class="mode-chip"
+                      data-mode="M1"
+                      type="button"
+                    >
+                      M1
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="M2"
+                      type="button"
+                    >
+                      M2
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="M3"
+                      type="button"
+                    >
+                      M3
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="M4"
+                      type="button"
+                    >
+                      M4
+                    </button>
+                  </div>
+                </div>
+                <div class="mode-group" data-family="scottie">
+                  <p class="mode-group__label mono"><i></i> Scottie</p>
+                  <div class="mode-group__chips">
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="S1"
+                      type="button"
+                    >
+                      S1
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="S2"
+                      type="button"
+                    >
+                      S2
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="SDX"
+                      type="button"
+                    >
+                      SDX
+                    </button>
+                  </div>
+                </div>
+                <div class="mode-group" data-family="robot">
+                  <p class="mode-group__label mono"><i></i> Robot color</p>
+                  <div class="mode-group__chips">
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="R24"
+                      type="button"
+                    >
+                      R24
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="R36"
+                      type="button"
+                    >
+                      R36
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="R72"
+                      type="button"
+                    >
+                      R72
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="R12"
+                      type="button"
+                    >
+                      R12
+                    </button>
+                  </div>
+                </div>
+                <div class="mode-group" data-family="bw">
+                  <p class="mode-group__label mono"><i></i> Robot B/N</p>
+                  <div class="mode-group__chips">
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="BW8"
+                      type="button"
+                    >
+                      BW8
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="BW12"
+                      type="button"
+                    >
+                      BW12
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="BW24"
+                      type="button"
+                    >
+                      BW24
+                    </button>
+                  </div>
+                </div>
+                <div class="mode-group" data-family="pd">
+                  <p class="mode-group__label mono"><i></i> PD</p>
+                  <div class="mode-group__chips">
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="PD50"
+                      type="button"
+                    >
+                      PD50
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="PD90"
+                      type="button"
+                    >
+                      PD90
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="PD120"
+                      type="button"
+                    >
+                      PD120
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="PD160"
+                      type="button"
+                    >
+                      PD160
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="PD180"
+                      type="button"
+                    >
+                      PD180
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="PD240"
+                      type="button"
+                    >
+                      PD240
+                    </button>
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="PD290"
+                      type="button"
+                    >
+                      PD290
+                    </button>
+                  </div>
+                </div>
+                <div class="mode-group" data-family="yoniq">
+                  <p class="mode-group__label mono"><i></i> YoniQ</p>
+                  <div class="mode-group__chips">
+                    <button
+                      aria-pressed="false"
+                      class="mode-chip"
+                      data-mode="YQ"
+                      type="button"
+                    >
+                      YQ
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                aria-atomic="true"
+                aria-live="polite"
+                class="mode-readout"
+                data-mode-readout=""
+              >
+                <p class="mode-readout__family mono" data-mode-family="">
+                  Martin · color
+                </p>
+                <div class="mode-readout__main">
+                  <div>
+                    <p class="mode-readout__code" data-mode-code="">M1</p>
+                    <p class="mode-readout__name" data-mode-name="">
+                      Martin M1
+                    </p>
+                  </div>
+                  <div class="mode-readout__screen">
+                    <div class="mode-readout__rect" data-mode-rect="">
+                      <span data-mode-dims="">320 × 256</span>
+                    </div>
+                  </div>
+                </div>
+                <dl class="mode-readout__facts">
+                  <div>
+                    <dt>Imagen</dt>
+                    <dd data-mode-size="">320 × 256</dd>
+                  </div>
+                  <div>
+                    <dt>Líneas</dt>
+                    <dd data-mode-lines="">256</dd>
+                  </div>
+                  <div>
+                    <dt>VIS</dt>
+                    <dd data-mode-vis="">0x2C</dd>
+                  </div>
+                </dl>
+                <p class="mode-readout__note">
+                  La cabecera VIS sale antes de la primera línea, así el
+                  receptor nunca tiene que adivinar el modo.
+                </p>
+                <code class="mode-readout__frame"
+                  >ESTIVI MODE <span data-mode-frame="">M1</span></code
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        aria-labelledby="inside-title"
+        class="section section--inside"
+        id="inside"
+      >
+        <div class="container">
+          <header class="section-head">
+            <p class="section-index"><span>05</span> Adentro</p>
+            <div class="section-head__row">
+              <h2 class="section-title" id="inside-title">
+                Mirá<br ><em>adentro.</em>
+              </h2>
+              <p class="section-lede">
+                Ventanas reales, sin maquetas. El transmisor dibuja su interfaz
+                por software; el receptor es una sola página. Capturas de Estivi
+                0.2.2.
+              </p>
+            </div>
+          </header>
+          <div class="gallery reveal" data-gallery="">
+            <div class="gallery__bar">
+              <div
+                aria-label="Capturas de Estivi"
+                class="gallery__tabs"
+                role="tablist"
+              >
+                <button
+                  aria-controls="panel-grid"
+                  aria-selected="true"
+                  class="gallery-tab"
+                  data-gallery-tab="grid"
+                  id="tab-grid"
+                  role="tab"
+                  type="button"
+                >
+                  Grilla
+                </button>
+                <button
+                  aria-controls="panel-programs"
+                  aria-selected="false"
+                  class="gallery-tab"
+                  data-gallery-tab="programs"
+                  id="tab-programs"
+                  role="tab"
+                  tabindex="-1"
+                  type="button"
+                >
+                  Programas
+                </button>
+                <button
+                  aria-controls="panel-graphics"
+                  aria-selected="false"
+                  class="gallery-tab"
+                  data-gallery-tab="graphics"
+                  id="tab-graphics"
+                  role="tab"
+                  tabindex="-1"
+                  type="button"
+                >
+                  Gráficos
+                </button>
+                <button
+                  aria-controls="panel-receiver"
+                  aria-selected="false"
+                  class="gallery-tab"
+                  data-gallery-tab="receiver"
+                  id="tab-receiver"
+                  role="tab"
+                  tabindex="-1"
+                  type="button"
+                >
+                  Receptor
+                </button>
+                <button
+                  aria-controls="panel-calendar"
+                  aria-selected="false"
+                  class="gallery-tab"
+                  data-gallery-tab="calendar"
+                  id="tab-calendar"
+                  role="tab"
+                  tabindex="-1"
+                  type="button"
+                >
+                  Calendario
+                </button>
+              </div>
+              <span class="gallery__count mono">05 capturas</span>
+            </div>
+            <div class="gallery__stage">
+              <div
+                aria-labelledby="tab-grid"
+                class="gallery-panel"
+                data-gallery-panel="grid"
+                id="panel-grid"
+                role="tabpanel"
+              >
+                <button
+                  aria-label="Ampliar captura del transmisor"
+                  class="gallery-shot"
+                  data-lightbox-open=""
+                  type="button"
+                >
+                  <span class="gallery-shot__frame">
+                    <img
+                      alt="Transmisor de Estivi mostrando la grilla semanal, la próxima transmisión y la línea de tiempo del bloque elegido."
+                      height="820"
+                      loading="eager"
+                      src="/assets/img/tx-main.webp"
+                      width="1280">
+                    <span class="gallery-shot__expand"
+                      ><svg aria-hidden="true" class="icon">
+                        <use href="#i-expand"></use>
+                      </svg>
+                      Ampliar</span
+                    >
+                  </span>
+                </button>
+              </div>
+              <div
+                aria-labelledby="tab-programs"
+                class="gallery-panel"
+                data-gallery-panel="programs"
+                hidden
+                id="panel-programs"
+                role="tabpanel"
+              >
+                <button
+                  aria-label="Ampliar captura de programas"
+                  class="gallery-shot"
+                  data-lightbox-open=""
+                  type="button"
+                >
+                  <span class="gallery-shot__frame">
+                    <img
+                      alt="Ventana de programas con inicio, fin e intervalo para cada día de la semana."
+                      height="680"
+                      loading="lazy"
+                      src="/assets/img/tx-programs.webp"
+                      width="780">
+                    <span class="gallery-shot__expand"
+                      ><svg aria-hidden="true" class="icon">
+                        <use href="#i-expand"></use>
+                      </svg>
+                      Ampliar</span
+                    >
+                  </span>
+                </button>
+              </div>
+              <div
+                aria-labelledby="tab-graphics"
+                class="gallery-panel"
+                data-gallery-panel="graphics"
+                hidden
+                id="panel-graphics"
+                role="tabpanel"
+              >
+                <button
+                  aria-label="Ampliar captura del editor de gráficos"
+                  class="gallery-shot"
+                  data-lightbox-open=""
+                  type="button"
+                >
+                  <span class="gallery-shot__frame">
+                    <img
+                      alt="Editor de gráficos con capas de texto e imagen sobre la próxima imagen en vivo."
+                      height="800"
+                      loading="lazy"
+                      src="/assets/img/tx-editor.webp"
+                      width="1280">
+                    <span class="gallery-shot__expand"
+                      ><svg aria-hidden="true" class="icon">
+                        <use href="#i-expand"></use>
+                      </svg>
+                      Ampliar</span
+                    >
+                  </span>
+                </button>
+              </div>
+              <div
+                aria-labelledby="tab-receiver"
+                class="gallery-panel"
+                data-gallery-panel="receiver"
+                hidden
+                id="panel-receiver"
+                role="tabpanel"
+              >
+                <button
+                  aria-label="Ampliar captura del receptor"
+                  class="gallery-shot"
+                  data-lightbox-open=""
+                  type="button"
+                >
+                  <span class="gallery-shot__frame">
+                    <img
+                      alt="Receptor de Estivi mostrando un atardecer decodificado, la línea de tiempo debajo y la fila de horas de la estación."
+                      height="1111"
+                      loading="lazy"
+                      src="/assets/img/rx-main.webp"
+                      width="1600">
+                    <span class="gallery-shot__expand"
+                      ><svg aria-hidden="true" class="icon">
+                        <use href="#i-expand"></use>
+                      </svg>
+                      Ampliar</span
+                    >
+                  </span>
+                </button>
+              </div>
+              <div
+                aria-labelledby="tab-calendar"
+                class="gallery-panel"
+                data-gallery-panel="calendar"
+                hidden
+                id="panel-calendar"
+                role="tabpanel"
+              >
+                <button
+                  aria-label="Ampliar captura del calendario"
+                  class="gallery-shot"
+                  data-lightbox-open=""
+                  type="button"
+                >
+                  <span class="gallery-shot__frame">
+                    <img
+                      alt="Calendario de los próximos treinta días con la hora local y el indicativo de cada programa."
+                      height="1111"
+                      loading="lazy"
+                      src="/assets/img/rx-calendar.webp"
+                      width="1600">
+                    <span class="gallery-shot__expand"
+                      ><svg aria-hidden="true" class="icon">
+                        <use href="#i-expand"></use>
+                      </svg>
+                      Ampliar</span
+                    >
+                  </span>
+                </button>
+              </div>
+            </div>
+            <div class="gallery__caption">
+              <div>
+                <h3 class="gallery__title" data-gallery-title="">
+                  La estación de un vistazo
+                </h3>
+                <p class="gallery__desc" data-gallery-desc="">
+                  La grilla semanal, la próxima transmisión y la línea de tiempo
+                  del bloque elegido.
+                </p>
+              </div>
+              <a
+                class="gallery__source text-link"
+                data-gallery-source=""
+                href="https://github.com/fluoroom/estivi-tx"
+              >
+                <span data-gallery-source-label="">estivi-tx</span>
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-up-right"></use>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        aria-labelledby="get-title"
+        class="section section--get"
+        id="get"
+      >
+        <div class="container">
+          <header class="section-head">
+            <p class="section-index"><span>06</span> Para empezar</p>
+            <div class="section-head__row">
+              <h2 class="section-title" id="get-title">
+                Ponelo<br ><em>al aire.</em>
+              </h2>
+              <p class="section-lede">
+                La estación es un ejecutable. El receptor es una URL. Elegí tu
+                punta, ajustá la frecuencia y dejá que la semana corra.
+              </p>
+            </div>
+          </header>
+          <div class="get-grid">
+            <article class="get-card get-card--tx reveal">
+              <div class="get-card__head">
+                <p class="get-card__label mono">transmisor · estivi-tx</p>
+                <span class="get-card__version mono">v0.2.2</span>
+              </div>
+              <h3>Descargá la estación.</h3>
+              <p class="get-card__copy">
+                Un ejecutable para Linux, Windows o macOS. Configurá tu
+                indicativo, la salida de audio y el PTT, y después armá la
+                grilla. ¿No tenés radio? Exportá cualquier rango a FLAC.
+              </p>
+              <ul
+                aria-label="Descargar Estivi para tu plataforma"
+                class="os-list"
+              >
+                <li>
+                  <a
+                    href="https://github.com/fluoroom/estivi-tx/releases/latest"
+                    ><span>Linux</span><span class="mono">x86_64</span
+                    ><svg aria-hidden="true" class="icon">
+                      <use href="#i-arrow-down"></use></svg
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/fluoroom/estivi-tx/releases/latest"
+                    ><span>Windows</span><span class="mono">x86_64 / i686</span
+                    ><svg aria-hidden="true" class="icon">
+                      <use href="#i-arrow-down"></use></svg
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/fluoroom/estivi-tx/releases/latest"
+                    ><span>macOS</span><span class="mono">universal</span
+                    ><svg aria-hidden="true" class="icon">
+                      <use href="#i-arrow-down"></use></svg
+                  ></a>
+                </li>
+              </ul>
+              <div class="get-card__actions">
+                <a
+                  class="btn btn--primary"
+                  href="https://github.com/fluoroom/estivi-tx/releases/latest"
+                >
+                  Última versión
+                  <svg aria-hidden="true" class="icon">
+                    <use href="#i-arrow-down"></use>
+                  </svg>
+                </a>
+                <a
+                  class="text-link"
+                  href="https://github.com/fluoroom/estivi-tx/blob/main/docs/MANUAL.md"
+                  >Manual
+                  <svg aria-hidden="true" class="icon">
+                    <use href="#i-arrow-up-right"></use></svg
+                ></a>
+              </div>
+              <details class="disclosure">
+                <summary>
+                  <span>Compilar desde el código</span>
+                  <span class="disclosure__icon"
+                    ><svg aria-hidden="true" class="icon">
+                      <use href="#i-plus"></use></svg
+                  ></span>
+                </summary>
+                <div class="code-block">
+                  <div class="code-block__bar">
+                    <span class="mono">shell</span
+                    ><button
+                      aria-label="Copiar comandos de compilación"
+                      class="copy-btn"
+                      data-copy-target="build-tx"
+                      type="button"
+                    >
+                      <svg aria-hidden="true" class="icon">
+                        <use href="#i-copy"></use></svg
+                      ><span>Copiar</span>
+                    </button>
+                  </div>
+                  <pre
+                    aria-label="Comandos de compilación"
+                    id="build-tx"
+                    tabindex="0"
+                  ><code>cd estivi-tx
+cargo build --release
+cargo test</code></pre>
+                </div>
+                <p class="disclosure__note">
+                  Rust estable 1.85 o posterior. Linux necesita ALSA, fontconfig
+                  y GTK 3.
+                </p>
+              </details>
+            </article>
+            <article class="get-card get-card--rx reveal">
+              <div class="get-card__head">
+                <p class="get-card__label mono">receptor · estivi-rx</p>
+                <span class="get-card__version mono">navegador</span>
+              </div>
+              <h3>Escuchá el canal.</h3>
+              <p class="get-card__copy">
+                Abrí el receptor público, permití el micrófono y apuntalo al
+                parlante o al audio de línea de tu receptor. La decodificación
+                ocurre en la página; el servidor solo sirve archivos estáticos.
+              </p>
+              <a class="receiver-url" href="https://estivi-rx.lu1aqy.radio">
+                <span aria-hidden="true" class="receiver-url__dot"></span>
+                <span>estivi-rx.lu1aqy.radio</span>
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-up-right"></use>
+                </svg>
+              </a>
+              <p class="get-card__note">
+                El micrófono necesita HTTPS o <code>localhost</code>. Se instala
+                como app y abre sin conexión después de la primera visita.
+              </p>
+              <div class="code-block">
+                <div class="code-block__bar">
+                  <span class="mono">corré el tuyo</span
+                  ><button
+                    aria-label="Copiar comandos del receptor"
+                    class="copy-btn"
+                    data-copy-target="run-rx"
+                    type="button"
+                  >
+                    <svg aria-hidden="true" class="icon">
+                      <use href="#i-copy"></use></svg
+                    ><span>Copiar</span>
+                  </button>
+                </div>
+                <pre
+                  aria-label="Comandos de configuración del receptor"
+                  id="run-rx"
+                  tabindex="0"
+                ><code>git clone --recurse-submodules https://github.com/fluoroom/estivi.git
+cd estivi/estivi-rx
+docker compose up -d --build</code></pre>
+              </div>
+              <p class="get-card__note get-card__note--mono mono">
+                abre en http://localhost:8086
+              </p>
+              <div class="get-card__actions">
+                <a class="btn btn--ghost" href="https://estivi-rx.lu1aqy.radio">
+                  Abrir receptor
+                  <svg aria-hidden="true" class="icon">
+                    <use href="#i-arrow-up-right"></use>
+                  </svg>
+                </a>
+                <a
+                  class="text-link"
+                  href="https://github.com/fluoroom/estivi-rx"
+                  >Código
+                  <svg aria-hidden="true" class="icon">
+                    <use href="#i-arrow-up-right"></use></svg
+                ></a>
+              </div>
+            </article>
+          </div>
+          <div class="devbar reveal">
+            <div class="devbar__copy">
+              <p class="devbar__label mono">para desarrolladores</p>
+              <p>
+                El paraguas fija los tres proyectos en commits conocidos. Cada
+                submódulo mantiene su propia historia, sus releases y su
+                documentación.
+              </p>
+            </div>
+            <div class="devbar__links">
+              <a href="https://github.com/fluoroom/estivi"
+                >Paraguas
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-up-right"></use></svg
+              ></a>
+              <a href="https://github.com/fluoroom/estivi-tx"
+                >Transmisor
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-up-right"></use></svg
+              ></a>
+              <a href="https://github.com/fluoroom/estivi-rx"
+                >Receptor
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-up-right"></use></svg
+              ></a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-cta">
+          <div class="footer-cta__copy">
+            <p class="section-index"><span>73</span> Fin de la transmisión</p>
+            <h2 class="footer-cta__title">Nos vemos <em>en el aire.</em></h2>
+            <p class="footer-cta__text">
+              Televisión de barrido lento, con agenda. Hecha para la radio, no
+              para la nube.
+            </p>
+            <div class="footer-cta__actions">
+              <a
+                class="btn btn--primary"
+                href="https://github.com/fluoroom/estivi-tx/releases/latest"
+                >Descargar Estivi
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-arrow-down"></use></svg
+              ></a>
+              <a
+                class="btn btn--ghost"
+                href="https://github.com/fluoroom/estivi"
+                >Ver en GitHub
+                <svg aria-hidden="true" class="icon">
+                  <use href="#i-github"></use></svg
+              ></a>
+            </div>
+          </div>
+          <div class="footer-cta__sign">
+            <span class="footer-cta__73">73</span>
+            <span class="footer-cta__73-label mono">saludos</span>
+            <span class="footer-cta__callsign mono">LU1AQY</span>
+          </div>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col footer-col--brand">
+            <a class="brand brand--footer" href="#top">
+              <span class="brand__word"
+                >estivi<span class="brand__dot">.</span></span
+              >
+              <span class="sr-only">— inicio</span>
+            </a>
+            <p>
+              Una estación SSTV con agenda y un receptor en el navegador.
+              Imágenes, una guía y un calendario — por el aire.
+            </p>
+            <p class="footer-col__credit">
+              Un proyecto de <a href="https://lu1aqy.radio">LU1AQY</a>.
+            </p>
+            <div class="footer-lang">
+              <span class="footer-lang__label mono">Idioma</span>
+              <div aria-label="Idioma" class="lang-switch" role="group">
+                <span
+                  aria-current="page"
+                  class="lang-option is-current"
+                  lang="es"
+                  >ES<span class="sr-only"> — Español</span></span
+                >
+                <span aria-hidden="true" class="lang-sep">/</span>
+                <a
+                  class="lang-option"
+                  data-set-lang="en"
+                  href="/"
+                  hreflang="en"
+                  lang="en"
+                  >EN<span class="sr-only"> — English</span></a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="footer-col">
+            <p class="footer-col__label mono">Proyecto</p>
+            <a href="https://github.com/fluoroom/estivi">Paraguas</a>
+            <a href="https://github.com/fluoroom/estivi-tx">Transmisor</a>
+            <a href="https://github.com/fluoroom/estivi-rx">Receptor</a>
+            <a
+              href="https://github.com/fluoroom/estivi-tx/blob/main/ejemplo/canal-demo.estivi"
+              >Canal de ejemplo</a
+            >
+          </div>
+          <div class="footer-col">
+            <p class="footer-col__label mono">Leer</p>
+            <a
+              href="https://github.com/fluoroom/estivi-tx/blob/main/docs/MANUAL.md"
+              >Manual</a
+            >
+            <a href="https://github.com/fluoroom/estivi-tx/blob/main/AX25.md"
+              >Interfaz AX.25</a
+            >
+            <a href="https://github.com/fluoroom/estivi/blob/main/README.md"
+              >Readme en inglés</a
+            >
+            <a href="https://github.com/fluoroom/estivi-tx/releases"
+              >Versiones</a
+            >
+          </div>
+          <div class="footer-col">
+            <p class="footer-col__label mono">En otros lados</p>
+            <a href="https://github.com/fluoroom/estivi">GitHub</a>
+            <a href="https://estivi-rx.lu1aqy.radio">estivi-rx.lu1aqy.radio</a>
+            <a href="https://lu1aqy.radio">lu1aqy.radio</a>
+            <a href="https://github.com/fluoroom/estivi-webpage">Esta página</a>
+          </div>
+        </div>
+        <div class="footer-base">
+          <p>© 2026 LU1AQY · Estivi</p>
+          <p class="mono">Servido por nginx · Sin cookies ni rastreadores</p>
+          <p class="mono footer-base__73">73</p>
+        </div>
+      </div>
+      <div aria-hidden="true" class="footer-wordmark">estivi<span>.</span></div>
+    </footer>
+    <dialog aria-label="Visor de capturas" class="lightbox" data-lightbox="">
+      <div class="lightbox__bar">
+        <span class="mono lightbox__count" data-lightbox-count="">1 / 5</span>
+        <button
+          aria-label="Cerrar captura"
+          class="lightbox__close"
+          data-lightbox-close=""
+          type="button"
+        >
+          <svg aria-hidden="true" class="icon"><use href="#i-close"></use></svg>
+        </button>
+      </div>
+      <figure class="lightbox__figure">
+        <img
+          alt=""
+          data-lightbox-img=""
+          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+        <figcaption class="lightbox__caption">
+          <div>
+            <h3 data-lightbox-title="">Captura</h3>
+            <p data-lightbox-desc=""></p>
+          </div>
+          <div class="lightbox__nav">
+            <button
+              aria-label="Captura anterior"
+              class="icon-btn"
+              data-lightbox-prev=""
+              type="button"
+            >
+              <svg aria-hidden="true" class="icon">
+                <use href="#i-chevron-left"></use>
+              </svg>
+            </button>
+            <button
+              aria-label="Siguiente captura"
+              class="icon-btn"
+              data-lightbox-next=""
+              type="button"
+            >
+              <svg aria-hidden="true" class="icon">
+                <use href="#i-chevron-right"></use>
+              </svg>
+            </button>
+          </div>
+        </figcaption>
+      </figure>
+    </dialog>
+  </body>
+</html>
